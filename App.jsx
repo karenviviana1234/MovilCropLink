@@ -1,19 +1,66 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-/*  */
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { useTheme } from 'react-native-paper';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Header from './src/components/Header';
-import Sidebar from './src/components/Sidebar';
 import LoginUser from './src/screens/LoginUser';
-import RegisterUser from './src/screens/RegisterUser';
-import RecoverPasswordCE from './src/screens/RecoverPasswordCE';
 import RecoverPasswordC from './src/screens/RecoverPasswordC';
 import ChangePassword from './src/screens/ChangePassword';
-import UserTable from './src/screens/UserTable';
-import Listar from './src/screens/Listar';
+import StartCropLink from './src/screens/StartCropLink';
+import ListarEmpleados from './src/screens/ListarEmpleados';
+import ActividadEmpleado from './src/screens/ActividadEmpleado';
 
 const Stack = createStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
+
+const MyTabs = () => {
+  const { colors } = useTheme();
+
+  return (
+    <Tab.Navigator
+      initialRouteName="StartCropLink"
+      shifting={true}
+      activeColor={colors.primary}
+      inactiveColor={colors.text}
+      barStyle={{ backgroundColor: colors.background }}
+    >
+      <Tab.Screen
+        name="StartCropLink"
+        component={StartCropLink}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="home" size={30} color={colors} />
+          ),
+          tabBarColor: '#694fad', // Color del tab al seleccionar esta opción
+        }}
+      />
+      <Tab.Screen
+        name="ListarEmpleados"
+        component={ListarEmpleados}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="file-text" size={30} color={colors} />
+          ),
+          tabBarLabel: 'Actividades Asignadas',
+          tabBarColor: '#40c340', // Color del tab al seleccionar esta opción
+        }}
+      />
+      <Tab.Screen
+        name="ActiviadEmpleado"
+        component={ActividadEmpleado}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="file-text" size={30} color={colors} />
+          ),
+          tabBarLabel: 'Actividades Asignadas',
+          tabBarColor: '#40c340', // Color del tab al seleccionar esta opción
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 const App = () => {
   return (
@@ -25,38 +72,20 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="registro"
-          component={RegisterUser}
-          options={{ header: () => <Header title="Registro de usuario" /> }} // Agrega el encabezado al registro
-        />
-        <Stack.Screen
-          name="RecoverPasswordCE"
-          component={RecoverPasswordCE}
-          options={{ header: () => <Header title="Recuperar Contraseña" /> }} // Agrega el encabezado a la recuperación de contraseña
+          name="ChangePassword"
+          component={ChangePassword}
+          options={{ header: () => <Header title="Recuperación de contraseña" /> }}
         />
         <Stack.Screen
           name="RecoverPasswordC"
           component={RecoverPasswordC}
-          options={{ header: () => <Header title="Confirmar Contraseña" /> }} // Agrega el encabezado a la confirmación de contraseña
-        />
-          <Stack.Screen
-          name="Listar"
-          component={Listar}
-          options={{ header: () => <Header title="Listar" /> }}
+          options={{ header: () => <Header title="Recuperación de contraseña" /> }}
         />
         <Stack.Screen
-          name="ChangePassword"
-          component={ChangePassword}
-          options={{ header: () => <Header title="Cambiar Contraseña" /> }} // Agrega el encabezado al cambio de contraseña
+          name="Main"
+          component={MyTabs}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen
-        name="UserTable"
-        component={UserTable}
-        options={{
-          header: () => <Header title="Tabla Usuarios" />,
-          drawer: () => <Sidebar />, // **Añade la opción `drawer` con el componente `Sidebar`**
-        }}
-      />
       </Stack.Navigator>
     </NavigationContainer>
   );

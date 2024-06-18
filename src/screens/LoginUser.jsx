@@ -12,13 +12,18 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IP } from './IP';
 import NetInfo from '@react-native-community/netinfo';
+import { IP } from './IP'; // Asegúrate de que esto esté correcto
 
 const ip = IP;
 
 const LoginUser = () => {
   const navigation = useNavigation();
+
+  const navigateToRecoverPasswordC = () => {
+    navigation.navigate('RecoverPasswordC');
+  }
+
   const [formData, setFormData] = useState({
     correo: '',
     password: '',
@@ -31,18 +36,11 @@ const LoginUser = () => {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('Tipo de conexion', state.type);
-      console.log('Is connected?', state.isConnected);
       if (!state.isConnected) {
-        Alert.alert(
-          'Sin conexion',
-          'Por favor, verifica tu conexion a internet.',
-        );
+        Alert.alert('Sin conexión', 'Por favor, verifica tu conexión a internet.');
       }
     });
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   const handleInputChange = (name, value) => {
@@ -52,39 +50,51 @@ const LoginUser = () => {
   const Validacion = async () => {
     const connectionInfo = await NetInfo.fetch();
     if (!connectionInfo.isConnected) {
-      Alert.alert('Sin conexion', 'Por favor, verifica tu conexion a internet');
+      Alert.alert('Sin conexión', 'Por favor, verifica tu conexión a internet.');
+      return;
+    }
+
+    if (!formData.correo || !formData.password) {
+      Alert.alert('Campos incompletos', 'Por favor, complete todos los campos.');
       return;
     }
 
     try {
       const baseURL = `http://${ip}:3000/validacion`;
-      console.log('Enviando datos a:', baseURL, formData); // Depuración
-      const response = await axios.post(baseURL, formData);
-      console.log('Respuesta del servidor:', response.status, response.data); // Depuración
+      console.log('Enviando datos a:', baseURL, formData);
+      const response = await axios.post(baseURL, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (response.data.token && response.data.usuario) {
-        const { token, usuario } = response.data;
+      console.log('Respuesta del servidor:', response.status, response.data);
+
+      if (response.data.token && response.data.user.length > 0) {
+        const { token, user } = response.data;
         await AsyncStorage.setItem('token', token);
-        await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+        await AsyncStorage.setItem('usuario', JSON.stringify(user[0]));
+
+        const userStatus = user[0].estado;
+        const userRol = user[0].rol;
+
+        // Navega al TabNavigator
+        navigation.navigate('Main');
+        Alert.alert('Bienvenido Empleado');
       } else {
         throw new Error('Respuesta vacía o inválida');
       }
-
-      const storedUser = await AsyncStorage.getItem('usuario');
-      const parsedUser = JSON.parse(storedUser);
-      const userStatus = parsedUser.estado;
-      const userRol = parsedUser.rol;
-      console.log('Estado del usuario:', userStatus); // Depuración
-      console.log('Rol del usuario:', userRol); // Depuración
-
-      const tokenAsync = await AsyncStorage.getItem('token');
-      console.log('Token almacenado:', tokenAsync); // Depuración
-
-      navigation.navigate('Listar');
-      Alert.alert('Bienvenido Empleado');
     } catch (error) {
-      console.error('Error:', error); // Depuración
-      Alert.alert('Error', 'Ocurrió un error inesperado.');
+      console.error('Error: ', error.message);
+      if (error.response) {
+        console.error('Datos de error del servidor:', error.response.data);
+        Alert.alert('Error', `Error del servidor: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        console.error('No se recibió respuesta del servidor:', error.request);
+        Alert.alert('Error', 'No se pudo conectar con el servidor.');
+      } else {
+        Alert.alert('Error', `Error inesperado: ${error.message}`);
+      }
     }
   };
 
@@ -95,7 +105,7 @@ const LoginUser = () => {
         <Image source={require('../assets/logoOrigi.png')} style={styles.logo} />
 
         <TextInput
-          placeholder="Ingrese su Correo"
+          placeholder="Ingrese su Correo Electronico"
           style={styles.input}
           placeholderTextColor="#666"
           value={formData.correo}
@@ -103,41 +113,34 @@ const LoginUser = () => {
         />
 
         <View style={styles.passwordContainer}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputPassword}
-              placeholder="Ingrese su Contraseña"
-              placeholderTextColor="#666"
-              value={formData.password}
-              onChangeText={(text) => handleInputChange('password', text)}
-              secureTextEntry={secureTextEntry}
-            />
-          </View>
-          {/* Ícono de "toggle eye" */}
+          <TextInput
+            style={styles.inputPassword}
+            placeholder="Ingrese su Contraseña"
+            placeholderTextColor="#666"
+            value={formData.password}
+            onChangeText={(text) => handleInputChange('password', text)}
+            secureTextEntry={secureTextEntry}
+          />
           <TouchableOpacity
             style={styles.eyeIconContainer}
-            onPress={toggleSecureEntry}>
+            onPress={toggleSecureEntry}
+          >
             <Text style={{color: '#006000'}}>
               {secureTextEntry ? 'Mostrar' : 'Ocultar'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.forgotPasswordButton}
-        >
+        <TouchableOpacity style={styles.forgotPasswordButton} onPress={navigateToRecoverPasswordC}>
           <Text style={styles.forgotPasswordText}>¿OLVIDASTE LA CONTRASEÑA?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={Validacion}>
-          <Text style={styles.buttonText}>
-            Iniciar sesión
-          </Text>
+          <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -148,18 +151,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 25,
+    marginTop: 100,
     color: '#000',
   },
   logo: {
     width: 300,
     height: 250,
-    marginTop: 80,
-    marginBottom: 100,
+    marginTop: 50,
+    marginBottom: 40,
   },
   input: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#006000',
     borderRadius: 5,
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputPassword: {
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#006000',
     borderRadius: 5,
@@ -208,13 +211,15 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     marginTop: 10,
   },
+  
   forgotPasswordText: {
-    marginTop: 30,
+    marginBottom: 50,
     color: '#000',
     fontSize: 16,
     textDecorationLine: 'underline',
-    textAlign: 'center',
+    textAlign: 'left',
   },
+    
 });
 
 export default LoginUser;

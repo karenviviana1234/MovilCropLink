@@ -51,10 +51,10 @@ const Sidebar = () => {
         )}
 
         <Animated.View style={[styles.menuContent, { transform: [{ translateX: menuTranslateX }] }]}>
-          <Image
+         {/* <Image
             source={require('../assets/LogoCompras.jpg')}
             style={styles.logo}
-          />
+          /> */}
           <TouchableOpacity style={styles.menuItem}>
             <FontAwesome name="user" size={20} color="#FFFFFF" style={styles.icon} />
             <Text style={styles.menuText}>Perfil</Text>
