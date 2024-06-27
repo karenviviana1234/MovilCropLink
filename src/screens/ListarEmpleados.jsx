@@ -4,12 +4,12 @@ import {
   Text,
   StyleSheet,
   TextInput,
+  Image,
   TouchableOpacity,
   ScrollView,
   Alert
 } from 'react-native';
 import axiosClient from '../axiosClient';
-
 
 const ListarEmpleados = ({ navigation }) => {
   const [empleado, setEmpleado] = useState([]);
@@ -49,6 +49,7 @@ const ListarEmpleados = ({ navigation }) => {
       Alert.alert('Error', 'Error al cambiar el estado');
     }
   };
+
   const formatDate = (date) => {
     const d = new Date(date);
     const day = (`0${d.getDate()}`).slice(-2);
@@ -57,15 +58,52 @@ const ListarEmpleados = ({ navigation }) => {
     return `${day} / ${month} / ${year}`;
   };
 
+  const getStatusStyle = (estado) => {
+    const colors = {
+      activo: { backgroundColor: "#D1F4E0", color: "#12A150" },     // Verde
+      inactivo: { backgroundColor: "#FDD0DF", color: "#DC3545" },   // Rojo
+      proceso: { backgroundColor: "#FDEDD3", color: "#C4841D" },    // Amarillo
+      terminado: { backgroundColor: "#E4D4F4", color: "#6C757D" }   // Morado
+    };
+
+    return {
+      backgroundColor: colors[estado]?.backgroundColor || 'transparent',
+      color: colors[estado]?.color || '#000',
+      /*  backgroundColor: colors[estado]?.backgroundColor || 'transparent',
+       color: colors[estado]?.color || '#000',
+       paddingVertical: 2,
+       paddingHorizontal: 10,
+       borderRadius: 10,
+       marginRight: 130, */
+
+    };
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.header}>Lista</Text>
+      <View style={styles.header}>
+        <Image source={require('../assets/logoprueba.png')} style={styles.logo} />
+        <Text style={styles.txtheader}>Actividades Asignadas</Text>
+      </View>
       <ScrollView>
         {empleado.map((empleado, index) => (
           <View key={index} style={styles.card}>
-            <Text style={styles.text}>Actividad: {empleado.nombre_actividad}</Text>
-            <Text style={styles.text}>Fecha inicio: {formatDate(empleado.fecha_inicio)}</Text>
-            <Text style={styles.text}>Fecha fin: {formatDate(empleado.fecha_fin)}</Text>
+            <View style={styles.row}>
+              <Text style={styles.leftText}>Actividad</Text>
+              <Text style={styles.middleText}>{empleado.nombre_actividad}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.leftText}>Estado</Text>
+              <Text style={[styles.middleTextEstado, getStatusStyle(empleado.estado)]}>{empleado.estado}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.leftText}>Fecha inicio</Text>
+              <Text style={styles.middleText}>{formatDate(empleado.fecha_inicio)}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.leftText}>Fecha fin</Text>
+              <Text style={styles.middleText}>{formatDate(empleado.fecha_fin)}</Text>
+            </View>
 
             <TouchableOpacity
               style={styles.button}
@@ -82,9 +120,26 @@ const ListarEmpleados = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 20,
+    paddingRight: 30,
+    borderBottomColor: 'green',
+    borderBottomWidth: 2,
+    marginHorizontal: 20,
+  },
+  logo: {
+    width: 80,
+    height: 50,
+    marginBottom: 10,
+  },
+  txtheader: {
     fontSize: 24,
     textAlign: 'center',
-    marginVertical: 20,
+    color: 'green',
+    fontWeight: '600',
   },
   card: {
     backgroundColor: '#fff',
@@ -100,17 +155,46 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 1,
   },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  leftText: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'left',
+    flex: 1,
+  },
+  middleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    flex: 1,
+    /* paddingRight: 120, */
+    paddingRight: 120,
+  },
+  middleTextEstado: {
+    fontSize: 16,
+    fontWeight: '600',
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginRight: 150,
+  },
   text: {
     fontSize: 16,
     marginBottom: 10,
   },
   button: {
     backgroundColor: 'green',
-    paddingVertical: 10,
+    paddingVertical: 10, // Cambié 100 a 10 para una mejor apariencia
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
+    alignSelf: 'flex-end', // Esto alinea el botón al lado derecho
   },
   buttonText: {
     color: '#fff',
