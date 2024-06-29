@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { useTheme } from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import Header from './src/components/Header';
 import LoginUser from './src/screens/LoginUser';
 import RecoverPasswordC from './src/screens/RecoverPasswordC';
@@ -11,6 +12,9 @@ import ChangePassword from './src/screens/ChangePassword';
 import StartCropLink from './src/screens/StartCropLink';
 import ListarEmpleados from './src/screens/ListarEmpleados';
 import ActividadEmpleado from './src/screens/ActividadEmpleado';
+import Soport from './src/screens/Soport';
+import UserProfile from './src/screens/UserProfile';
+import UpdateProfile from './src/screens/UpdateProfile';
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -20,20 +24,20 @@ const MyTabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="StartCropLink"
+      initialRouteName="Inicio"
       shifting={true}
       activeColor={colors.primary}
       inactiveColor={colors.text}
       barStyle={{ backgroundColor: colors.background }}
     >
       <Tab.Screen
-        name="StartCropLink"
+        name="Inicio"
         component={StartCropLink}
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="home" size={30} color={colors} />
+            <FontAwesome name="home" size={25} color={color} />
           ),
-          tabBarColor: '#694fad', // Color del tab al seleccionar esta opción
+          tabBarColor: '#694fad',
         }}
       />
       <Tab.Screen
@@ -41,21 +45,32 @@ const MyTabs = () => {
         component={ListarEmpleados}
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="file-text" size={30} color={colors} />
+            <FontAwesome name="file-text" size={20} color={color} />
           ),
           tabBarLabel: 'Actividades Asignadas',
-          tabBarColor: '#40c340', // Color del tab al seleccionar esta opción
+          tabBarColor: '#40c340',
         }}
       />
       <Tab.Screen
-        name="ActiviadEmpleado"
-        component={ActividadEmpleado}
+        name="Soporte"
+        component={Soport}
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="file-text" size={30} color={colors} />
+            <FontAwesome name="legal" size={25} color={color} />
           ),
-          tabBarLabel: 'Actividades Asignadas',
-          tabBarColor: '#40c340', // Color del tab al seleccionar esta opción
+          tabBarLabel: 'Soporte',
+          tabBarColor: '#40c340',
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
+        component={UserProfile}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="user-circle" size={25} color={color} />
+          ),
+          tabBarLabel: 'Perfil',
+          tabBarColor: '#40c340',
         }}
       />
     </Tab.Navigator>
@@ -84,6 +99,16 @@ const App = () => {
         <Stack.Screen
           name="Main"
           component={MyTabs}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ActividadEmpleado"
+          component={ActividadEmpleado}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UpdatePerfil"
+          component={UpdateProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -69,12 +69,6 @@ const ListarEmpleados = ({ navigation }) => {
     return {
       backgroundColor: colors[estado]?.backgroundColor || 'transparent',
       color: colors[estado]?.color || '#000',
-      /*  backgroundColor: colors[estado]?.backgroundColor || 'transparent',
-       color: colors[estado]?.color || '#000',
-       paddingVertical: 2,
-       paddingHorizontal: 10,
-       borderRadius: 10,
-       marginRight: 130, */
 
     };
   };
@@ -107,7 +101,7 @@ const ListarEmpleados = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('ActiviadEmpleado', { id: empleado.id_actividad })}
+              onPress={() => navigation.navigate('ActividadEmpleado', { id: empleado.id_actividad })}
             >
               <Text style={styles.buttonText}>Iniciar</Text>
             </TouchableOpacity>
@@ -139,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     color: 'green',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   card: {
     backgroundColor: '#fff',
@@ -166,12 +160,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'left',
     flex: 1,
+    color: '#000',
   },
   middleText: {
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'left',
     flex: 1,
+    color: '#000',
     /* paddingRight: 120, */
     paddingRight: 120,
   },

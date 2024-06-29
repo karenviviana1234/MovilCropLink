@@ -1,84 +1,124 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
-const UserTable = ({ navigation }) => {
+const StartCropLink = () => {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const data = [
+    {
+      title: 'Nuestra Historia:',
+      image: require('../assets/dashboardUno.png'),
+      text: 'Crop Link surge a partir de la problemática que enfrentan muchos campesinos en sus cultivos, quienes a menudo carecen del tiempo o la disposición para estar pendientes de sus tierras. Tradicionalmente, el control de las fincas se realizaba de manera física, lo que resultaba en una organización poco eficiente y un desperdicio de papel perjudicial para el medio ambiente.',
+    },
+    {
+      title: 'Beneficios de utilizar croplink:',
+      subtitle: 'CROP LINK',
+      image: require('../assets/dashboardDos.png'),
+      text: ' Monitoreo en Tiempo Real: Los administradores y dueños de fincas pueden estar informados en todo momento sobre el estado de sus cultivos, permitiendo una respuesta rápida a cualquier percance o necesidad.',
+    },
+    {
+      image: require('../assets/dashboardTres.png'),
+      text: 'Optimización de la producción: Al tener un control efectivo y detallado de todas las producciones, los administradores pueden tomar decisiones informadas para optimizar el rendimiento y la eficiencia de sus cultivos.',
+    },
+    {
+      image: require('../assets/dashboardCuatro.png'),
+      text: 'Seguimiento detallado de actividades: Cada actividad realizada en los lotes es registrada y monitoreada, lo que permite un control preciso y detallado de las tareas asignadas a los empleados.',
+    },
+  ];
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Image source={require('../assets/logoprueba.png')} style={styles.logo} />
-                {/* <Text style={styles.txtheader}>Actividades Asignadas</Text> */}
-            </View>
-            <View style={styles.containertxt}>
-                <Text style={styles.title}>Aplicación diseñada para agricultores</Text>
-                <Text style={styles.titleCropLink}>CROP LINK</Text>
-                <Text style={styles.infoText}>Una plataforma innovadora y accesible que transforma la gestión de cultivos y fincas. Pensada para optimizar la productividad y la rentabilidad de los usuarios, esta herramienta es tu aliado en la toma de decisiones informadas para el éxito de tus cultivos.</Text>
-            </View>
-        </View>
-    );
+  const renderItem = ({ item }) => (
+    <View style={styles.slide}>
+      <View style={styles.content}>
+        <Text style={styles.title}>{item.title}</Text>
+        {item.subtitle && <Text style={styles.subtitle}>{item.subtitle}</Text>}
+        <Image source={item.image} style={styles.image} />
+        <Text style={styles.text}>{item.text}</Text>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.carouselContainer}>
+        <Carousel
+          data={data}
+          renderItem={renderItem}
+          sliderWidth={300}
+          itemWidth={300}
+          sliderHeight={500}
+          itemHeight={700}
+          onSnapToItem={(index) => setActiveSlide(index)}
+          vertical
+          loop
+        />
+        <Pagination
+          dotsLength={data.length}
+          activeDotIndex={activeSlide}
+          containerStyle={{ backgroundColor: 'transparent', paddingTop: 10 }}
+          dotStyle={{
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+          }}
+          inactiveDotOpacity={1}
+          inactiveDotScale={0.6}
+        />
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#B48E86',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 15,
-        /* marginBottom: 20,
-        paddingRight: 30,
-        borderBottomColor: 'green',
-        borderBottomWidth: 2, */
-        marginHorizontal: 20,
-    },
-    logo: {
-        width: 80,
-        height: 50,
-        marginBottom: 10,
-    },
-/*     txtheader: {
-        fontSize: 24,
-        textAlign: 'center',
-        color: 'green',
-        fontWeight: '600',
-    }, */
-    containertxt: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: '#B48E86',
-        paddingHorizontal: 30,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 260,
-        marginBottom: 1,
-        color: '#fff',
-        textAlign: 'center',
-        textShadowColor: '#rgba(0, 0, 0, 0.1)', // Add text shadow
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
-    },
-    titleCropLink: {
-        fontSize: 60,
-        fontWeight: 'bold',
-        marginTop: 5,
-        marginBottom: 1,
-        color: '#fff',
-        textAlign: 'center',
-        textShadowColor: '#rgba(0, 0, 0, 0.1)', // Add text shadow
-        textShadowOffset: { width: 1, height: 1 },
-    },
-    infoText: {
-        fontSize: 20,
-        lineHeight: 22,
-        textAlign: 'center',
-        color: '#fff',
-        marginBottom: 50,
-    },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  carouselContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slide: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 30,
+    paddingBottom: 80,
+    marginTop: 80,
+    marginBottom: 80,
+  },
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: 320,
+    height: 260,
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    marginTop: 100,
+    marginBottom: 30,
+    color: '#000',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  text: {
+    fontSize: 20,
+    lineHeight: 32,
+    textAlign: 'center',
+    color: '#000',
+    marginBottom: 60,
+  },
 });
 
-export default UserTable;
+export default StartCropLink;
