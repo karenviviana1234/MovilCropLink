@@ -3,23 +3,25 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   Image,
   TouchableOpacity,
   ScrollView,
   Alert
 } from 'react-native';
 import axiosClient from '../axiosClient';
+import ObservationModal from './ObservationModal';
 
-const ListarEmpleados = ({ navigation }) => {
+const Empleado = ({ navigation }) => {
   const [empleado, setEmpleado] = useState([]);
-  const [formData, setFormData] = useState({ observacion: '' });
+  const [selectedActividad, setSelectedActividad] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const ObtenerDatos = async () => {
     try {
       const response = await axiosClient.get('/Listar');
       console.log('Datos obtenidos:', response.data);
-      setEmpleado(response.data);
+      const activeData = response.data.filter(item => item.estado !== 'inactivo');
+      setEmpleado(activeData);
     } catch (error) {
       console.error('Error al obtener los datos:', error);
       Alert.alert('Error', 'Error al obtener los datos');
@@ -30,34 +32,37 @@ const ListarEmpleados = ({ navigation }) => {
     ObtenerDatos();
   }, []);
 
-  const handleSubmit = async (id_actividad) => {
-    try {
-      await axiosClient.put(`/EmpleadoMood/Registrar/${id_actividad}`, formData);
-      Alert.alert('Éxito', 'Observación Registrada exitosamente');
-    } catch (error) {
-      console.error('Error al procesar la solicitud:', error);
-      Alert.alert('Error', 'Error al registrar la observación');
-    }
+  const openModal = (actividad) => {
+    setSelectedActividad(actividad);
+    setModalVisible(true);
   };
 
-  const Desactivar = async (id_actividad) => {
+  const closeModal = () => {
+    setSelectedActividad(null);
+    setModalVisible(false);
+  };
+
+  const handleIniciar = async (actividad) => {
     try {
-      await axiosClient.put(`/cambioestado/${id_actividad}`);
-      ObtenerDatos(); // Refrescar los datos después de desactivar
+      // Actualizar estado a "proceso"
+      const responseEstado = await axiosClient.put(`/cambioestado/${actividad.id_actividad}`, { estado: 'proceso' });
+      if (responseEstado.status === 200) {
+        // Abrir modal para registrar observación
+        openModal(actividad);
+      } else {
+        Alert.alert('Error', 'No se pudo cambiar el estado de la actividad');
+      }
     } catch (error) {
       console.error('Error al cambiar el estado:', error);
-      Alert.alert('Error', 'Error al cambiar el estado');
+      Alert.alert('Error', 'Error al cambiar el estado de la actividad');
     }
   };
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const day = (`0${d.getDate()}`).slice(-2);
-    const month = (`0${d.getMonth() + 1}`).slice(-2);
-    const year = d.getFullYear();
-    return `${day} / ${month} / ${year}`;
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
-
+  
   const getStatusStyle = (estado) => {
     const colors = {
       activo: { backgroundColor: "#D1F4E0", color: "#12A150" },     // Verde
@@ -65,11 +70,11 @@ const ListarEmpleados = ({ navigation }) => {
       proceso: { backgroundColor: "#FDEDD3", color: "#C4841D" },    // Amarillo
       terminado: { backgroundColor: "#E4D4F4", color: "#6C757D" }   // Morado
     };
-
+  
     return {
       backgroundColor: colors[estado]?.backgroundColor || 'transparent',
       color: colors[estado]?.color || '#000',
-
+  
     };
   };
 
@@ -99,15 +104,26 @@ const ListarEmpleados = ({ navigation }) => {
               <Text style={styles.middleText}>{formatDate(empleado.fecha_fin)}</Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate('ActividadEmpleado', { id: empleado.id_actividad })}
-            >
-              <Text style={styles.buttonText}>Iniciar</Text>
-            </TouchableOpacity>
+           {empleado.estado !== 'terminado' && (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleIniciar(empleado)}
+              >
+                <Text style={styles.buttonText}>Iniciar</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>
+
+      {selectedActividad && (
+        <ObservationModal
+          visible={isModalVisible}
+          onClose={closeModal}
+          actividad={selectedActividad}
+          refreshData={ObtenerDatos}
+        />
+      )}
     </View>
   );
 };
@@ -168,7 +184,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     flex: 1,
     color: '#000',
-    /* paddingRight: 120, */
     paddingRight: 120,
   },
   middleTextEstado: {
@@ -177,20 +192,26 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 10,
     borderRadius: 10,
-    marginRight: 150,
   },
-  text: {
-    fontSize: 16,
-    marginBottom: 10,
+  greenStatus: {
+    backgroundColor: '#E5F6DF',
+    color: 'green',
+  },
+  redStatus: {
+    backgroundColor: '#F9D6D5',
+    color: 'red',
+  },
+  greyStatus: {
+    backgroundColor: 'lightgrey',
+    color: 'grey',
   },
   button: {
     backgroundColor: 'green',
-    paddingVertical: 10, // Cambié 100 a 10 para una mejor apariencia
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
-    alignSelf: 'flex-end', // Esto alinea el botón al lado derecho
   },
   buttonText: {
     color: '#fff',
@@ -198,4 +219,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListarEmpleados;
+export default Empleado;

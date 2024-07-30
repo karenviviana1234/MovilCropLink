@@ -10,8 +10,8 @@ import LoginUser from './src/screens/LoginUser';
 import RecoverPasswordC from './src/screens/RecoverPasswordC';
 import ChangePassword from './src/screens/ChangePassword';
 import StartCropLink from './src/screens/StartCropLink';
-import ListarEmpleados from './src/screens/ListarEmpleados';
-import ActividadEmpleado from './src/screens/ActividadEmpleado';
+import Empleado from './src/screens/Empleado';
+import FormEmpleado from './src/screens/FormEmpleado';
 import Soport from './src/screens/Soport';
 import UserProfile from './src/screens/UserProfile';
 import UpdateProfile from './src/screens/UpdateProfile';
@@ -41,8 +41,8 @@ const MyTabs = () => {
         }}
       />
       <Tab.Screen
-        name="ListarEmpleados"
-        component={ListarEmpleados}
+        name="Empleado"
+        component={Empleado}
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome name="file-text" size={20} color={color} />
@@ -102,8 +102,8 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ActividadEmpleado"
-          component={ActividadEmpleado}
+          name="FormEmpleado"
+          component={FormEmpleado}
           options={{ headerShown: false }}
         />
         <Stack.Screen

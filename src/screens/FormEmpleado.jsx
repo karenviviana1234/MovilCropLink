@@ -10,7 +10,7 @@ import {
 import axiosClient from '../axiosClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ActividadEmpleado = ({ route, navigation }) => {
+const FormEmpleado = ({ route, navigation }) => {
   const { id } = route.params;
   const [actividad, setActividad] = useState({});
   const [observacion, setObservacion] = useState('');
@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
   // Estilos aquí
 });
 
-export default ActividadEmpleado;
+export default FormEmpleado;
