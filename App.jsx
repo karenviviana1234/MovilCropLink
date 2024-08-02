@@ -7,7 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import Header from './src/components/Header';
 import LoginUser from './src/screens/LoginUser';
-import RecoverPasswordC from './src/screens/RecoverPasswordC';
+/* import RecoverPasswordC from './src/screens/RecoverPasswordC'; */
 import ChangePassword from './src/screens/ChangePassword';
 import StartCropLink from './src/screens/StartCropLink';
 import Empleado from './src/screens/Empleado';
@@ -91,11 +91,11 @@ const App = () => {
           component={ChangePassword}
           options={{ header: () => <Header title="Recuperación de contraseña" /> }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="RecoverPasswordC"
           component={RecoverPasswordC}
           options={{ header: () => <Header title="Recuperación de contraseña" /> }}
-        />
+        /> */}
         <Stack.Screen
           name="Main"
           component={MyTabs}

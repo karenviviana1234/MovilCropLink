@@ -24,7 +24,7 @@ const UserProfile = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.dataProfile}>
                     <FontAwesome name="map-marker" size={20} style={styles.icon} />
-                    <Text style={styles.datatxt}>Calle Falsa #123, Pueblo Imaginario</Text>
+                    <Text style={styles.datatxt}>Calle   Falsa #123, Pueblo Imaginario</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.OptionsProfile}>

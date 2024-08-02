@@ -1,101 +1,90 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import axiosClient from '../axiosClient';
 
-const RecoverPasswordC = ({ navigation }) => {
-    const [userEmail, setUserEmail] = useState('');
-    const [userDNI, setUserDNI] = useState('');
 
-    const navigateToChangePassword = () => {
-        navigation.navigate('ChangePassword');
-    }
+const RecoverPasswordC = () => {
+    const [correo, setCorreo] = useState('');
+    const navigation = useNavigation();
+    const { t } = useTranslation();
 
+    const handleRecuperar = async () => {
+        if (!correo.trim()) {
+            alert(t('emailRequired')); // Mostrar un mensaje de alerta si el campo está vacío
+            return;
+        }
+
+        try {
+            const response = await axiosClient.post('/Recu', { email: correo });
+            console.log('Correo enviado exitosamente:', response.data);
+            alert(t('emailSentSuccess')); // Usar una traducción para el mensaje de alerta
+            navigation.navigate('Login'); // Redirigir después del envío exitoso
+        } catch (error) {
+            console.error('Envío de correo fallido:', error);
+            alert(t('Mailfailure')); // Mostrar un mensaje de error
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Para recuperar su contraseña
-                ingrese el correo electronico con el
-                que se registro y su numero de
-                identificacion</Text>
-            {/* <Text style={styles.infoText}>Por favor ingrese el código de verificación enviado a su correo electrónico.</Text> */}
+        <View style={estilos.container}>
+            <Text style={estilos.title}>{t('passwordRecovery')}</Text>
+            <Text style={estilos.description}>
+                {t('recoveryDescription')}
+            </Text>
             <TextInput
-                placeholder="Ingrese su correo electronico"
-                value={userEmail}
-                onChangeText={setUserEmail}
-                style={styles.input}
-                placeholderTextColor="#666"
-                keyboardType="numeric" // Limita la entrada a solo números
+                style={estilos.input}
+                placeholder={t('emailPlaceholder')}
+                value={correo}
+                onChangeText={setCorreo}
+                keyboardType="email-address"
             />
-            <TextInput
-                placeholder="Ingrese su número de identificación"
-                value={userDNI}
-                onChangeText={setUserDNI}
-                style={styles.input}
-                placeholderTextColor="#666"
-                keyboardType="numeric" // Limita la entrada a solo números
-            />
-
-            <TouchableOpacity style={styles.button} onPress={navigateToChangePassword}>
-                <Text style={styles.buttonText}>Siguiente</Text>
+            <TouchableOpacity style={estilos.sendButton} onPress={handleRecuperar}>
+                <Text style={estilos.sendButtonText}>{t('sendButtonText')}</Text>
             </TouchableOpacity>
         </View>
     );
 };
 
-const styles = StyleSheet.create({
+const estilos = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        paddingHorizontal: 30,
+        paddingHorizontal: 20,
     },
     title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginTop: 25,
-        marginTop: 100,
-        marginBottom: 100,
-        color: '#000',
+        fontSize: 24,
+        marginBottom: 20,
         textAlign: 'center',
-        textShadowColor: '#rgba(0, 0, 0, 0.1)', // Add text shadow
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
+        fontWeight: 'bold',
+        color: 'black',
     },
-   /*  infoText: {
+    description: {
         fontSize: 16,
-        lineHeight: 22,
-        textAlign: 'justify',
-        color: '#666',
-        marginBottom: 50,
-    }, */
-    input: {
-        width: '100%',
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#57BF4F',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginBottom: 30,
-        color: '#000',
-    },
-    button: {
-        backgroundColor: '#00CC00', // Green button
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        borderRadius: 10,
-        marginTop: 100,
-        width: 180,
-        height: 60,
-        shadowColor: '#00CC00', // Add button shadow
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        marginBottom: 20,
         textAlign: 'center',
+        color: 'black',
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '100%',
+        marginBottom: 20,
+        paddingHorizontal: 10,
+    },
+    sendButton: {
+        backgroundColor: 'blue',
+        padding: 15,
+        borderRadius: 5,
+        width: '100%',
+        alignItems: 'center',
+    },
+    sendButtonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
