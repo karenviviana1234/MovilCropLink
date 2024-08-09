@@ -87,11 +87,6 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ChangePassword"
-          component={ChangePassword}
-          options={{ header: () => <Header title="Recuperación de contraseña" /> }}
-        />
-        <Stack.Screen
           name="Main"
           component={MyTabs}
           options={{ headerShown: false }}

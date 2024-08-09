@@ -131,9 +131,7 @@ const LoginUser = () => {
           </TouchableOpacity>
         </View>
 
-      {/*   <TouchableOpacity style={styles.forgotPasswordButton} onPress={ChangePassword}>
-          <Text style={styles.forgotPasswordText}>¿OLVIDASTE LA CONTRASEÑA?</Text>
-        </TouchableOpacity> */}
+
         <TouchableOpacity style={styles.button} onPress={Validacion}>
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
