@@ -8,51 +8,17 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import axiosClient from '../axiosClient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ObservationModal = ({ visible, onClose, actividad, refreshData }) => {
+const ObservationModal = ({ visible, onClose, actividad, onSubmit }) => {
   const [observacion, setObservacion] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (observacion.trim() === '') {
       Alert.alert('Error', 'La observación no puede estar vacía');
       return;
     }
 
-    try {
-      const token = await AsyncStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token no encontrado en AsyncStorage');
-      }
-
-      // Registrar observación
-      const responseObservacion = await axiosClient.post(
-        `/Registrar/${actividad.id_actividad}`,
-        { observacion },
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      );
-
-      if (responseObservacion.status === 200) {
-        // Cambiar estado a "terminado"
-        const responseEstado = await axiosClient.put(`/cambioestado/${actividad.id_actividad}`, { estado: 'terminado' });
-        
-        if (responseEstado.status === 200) {
-          Alert.alert('Éxito', 'Observación registrada y actividad terminada exitosamente');
-          onClose();
-          refreshData(); // Refrescar los datos después de registrar la observación
-        } else {
-          Alert.alert('Error', 'No se pudo cambiar el estado a terminado');
-        }
-      } else {
-        Alert.alert('Error', 'No se pudo registrar la observación');
-      }
-    } catch (error) {
-      console.error('Error al procesar la solicitud:', error);
-      Alert.alert('Error', 'Error al registrar la observación');
-    }
+    onSubmit(observacion, actividad);
   };
 
   return (

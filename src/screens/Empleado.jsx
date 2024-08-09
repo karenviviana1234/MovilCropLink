@@ -44,11 +44,14 @@ const Empleado = ({ navigation }) => {
 
   const handleIniciar = async (actividad) => {
     try {
-      // Actualizar estado a "proceso"
-      const responseEstado = await axiosClient.put(`/cambioestado/${actividad.id_actividad}`, { estado: 'proceso' });
+      const responseEstado = await axiosClient.put(`/cambioestado/${actividad.id_actividad}`);
       if (responseEstado.status === 200) {
-        // Abrir modal para registrar observación
-        openModal(actividad);
+        const updatedEmpleado = empleado.map(emp =>
+          emp.id_actividad === actividad.id_actividad
+            ? { ...emp, estado: 'proceso' }
+            : emp
+        );
+        setEmpleado(updatedEmpleado);
       } else {
         Alert.alert('Error', 'No se pudo cambiar el estado de la actividad');
       }
@@ -58,11 +61,39 @@ const Empleado = ({ navigation }) => {
     }
   };
 
+  const handleObservationSubmit = async (observacion, actividad) => {
+    try {
+      // Registrar observación
+      const responseObservacion = await axiosClient.post(
+        `/Registrar/${actividad.id_actividad}`,
+        { observacion }
+      );
+
+      if (responseObservacion.status === 200) {
+        // Cambiar estado a "terminado"
+        const responseEstado = await axiosClient.put(`/cambioestado/${actividad.id_actividad}`, { estado: 'terminado' });
+
+        if (responseEstado.status === 200) {
+          Alert.alert('Éxito', 'Observación registrada y actividad terminada exitosamente');
+          closeModal();
+          ObtenerDatos(); // Refrescar los datos después de registrar la observación
+        } else {
+          Alert.alert('Error', 'No se pudo cambiar el estado a terminado');
+        }
+      } else {
+        Alert.alert('Error', 'No se pudo registrar la observación');
+      }
+    } catch (error) {
+      console.error('Error al procesar la solicitud:', error);
+      Alert.alert('Error', 'Error al registrar la observación');
+    }
+  };
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  
+
   const getStatusStyle = (estado) => {
     const colors = {
       activo: { backgroundColor: "#D1F4E0", color: "#12A150" },     // Verde
@@ -70,11 +101,11 @@ const Empleado = ({ navigation }) => {
       proceso: { backgroundColor: "#FDEDD3", color: "#C4841D" },    // Amarillo
       terminado: { backgroundColor: "#E4D4F4", color: "#6C757D" }   // Morado
     };
-  
+
     return {
       backgroundColor: colors[estado]?.backgroundColor || 'transparent',
       color: colors[estado]?.color || '#000',
-  
+
     };
   };
 
@@ -104,12 +135,18 @@ const Empleado = ({ navigation }) => {
               <Text style={styles.middleText}>{formatDate(empleado.fecha_fin)}</Text>
             </View>
 
-           {empleado.estado !== 'terminado' && (
+            {empleado.estado !== 'terminado' && (
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleIniciar(empleado)}
+                onPress={() => {
+                  if (empleado.estado === 'proceso') {
+                    openModal(empleado);
+                  } else {
+                    handleIniciar(empleado);
+                  }
+                }}
               >
-                <Text style={styles.buttonText}>Iniciar</Text>
+                <Text style={styles.buttonText}>{empleado.estado === 'proceso' ? 'Enviar Observación' : 'Iniciar'}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -121,13 +158,12 @@ const Empleado = ({ navigation }) => {
           visible={isModalVisible}
           onClose={closeModal}
           actividad={selectedActividad}
-          refreshData={ObtenerDatos}
+          onSubmit={handleObservationSubmit}
         />
       )}
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',

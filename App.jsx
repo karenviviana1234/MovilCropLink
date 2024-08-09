@@ -91,11 +91,6 @@ const App = () => {
           component={ChangePassword}
           options={{ header: () => <Header title="Recuperación de contraseña" /> }}
         />
-        {/* <Stack.Screen
-          name="RecoverPasswordC"
-          component={RecoverPasswordC}
-          options={{ header: () => <Header title="Recuperación de contraseña" /> }}
-        /> */}
         <Stack.Screen
           name="Main"
           component={MyTabs}

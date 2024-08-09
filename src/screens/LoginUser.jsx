@@ -20,8 +20,8 @@ const ip = IP;
 const LoginUser = () => {
   const navigation = useNavigation();
 
-  const navigateToRecoverPasswordC = () => {
-    navigation.navigate('RecoverPasswordC');
+  const ChangePassword = () => {
+    navigation.navigate('ChangePassword');
   }
 
   const [formData, setFormData] = useState({
@@ -131,9 +131,9 @@ const LoginUser = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.forgotPasswordButton} onPress={navigateToRecoverPasswordC}>
+      {/*   <TouchableOpacity style={styles.forgotPasswordButton} onPress={ChangePassword}>
           <Text style={styles.forgotPasswordText}>¿OLVIDASTE LA CONTRASEÑA?</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity style={styles.button} onPress={Validacion}>
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>

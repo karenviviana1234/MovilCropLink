@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import axiosClient from '../axiosClient';
 
 const ChangePassword = ({ navigation }) => {
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [correo, setCorreo] = useState('');
 
-    const handlePasswordChange = async () => {
-        // Validate passwords
-        if (!newPassword || !confirmPassword) {
-            return alert('Todos los campos son obligatorios');
+    const handleCorreoSubmit = async () => {
+        // Validate correo
+        if (!correo) {
+            return alert('El campo de correo electrónico es obligatorio');
         }
 
-        if (newPassword !== confirmPassword) {
-            return alert('Las contraseñas no coinciden');
+        try {
+            const response = await axiosClient.post('/Recu', { correo });
+            console.log('Correo submitted successfully:', response.data);
+            alert('Se envió el correo para la recuperación de contraseña');
+            navigateToLoginUser();
+        } catch (error) {
+            console.error('Correo submission failed:', error);
+            alert('Error al enviar el correo');
         }
-
-        // Si las contraseñas coinciden y no hay campos vacíos, muestra el mensaje de éxito
-        alert('Se actualizó con éxito la contraseña');
-        
-        // Después de mostrar el mensaje de éxito, navega a la otra vista
-        navigateToLoginUser();
     };
 
     const navigateToLoginUser = () => {
@@ -28,26 +28,17 @@ const ChangePassword = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Escriba su nueva contraseña.</Text>
-           {/*  <Text style={styles.infoText}>Escriba su nueva contraseña.</Text> */}
+            <Text style={styles.title}>Ingrese su correo electrónico.</Text>
             <TextInput
-                placeholder="Ingrese la nueva contraseña"
-                value={newPassword}
-                onChangeText={setNewPassword}
+                placeholder="Ingrese su correo electrónico"
+                value={correo}
+                onChangeText={setCorreo}
                 style={styles.input}
                 placeholderTextColor="#666"
-                secureTextEntry={true}
+                keyboardType="email-address"
             />
-            <TextInput
-                placeholder="Confirmar contraseña"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                style={styles.input}
-                placeholderTextColor="#666"
-                secureTextEntry={true}
-            />
-            <TouchableOpacity style={styles.button} onPress={handlePasswordChange}>
-                <Text style={styles.buttonText}>Continuar</Text>
+            <TouchableOpacity style={styles.button} onPress={handleCorreoSubmit}>
+                <Text style={styles.buttonText}>Enviar</Text>
             </TouchableOpacity>
         </View>
     );
@@ -63,7 +54,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 100,
+        marginBottom: 20,
         color: '#000',
         textAlign: 'center',
         marginTop: 150,
@@ -75,23 +66,16 @@ const styles = StyleSheet.create({
         borderColor: '#57BF4F',
         borderRadius: 5,
         paddingHorizontal: 10,
-        marginBottom: 50,
+        marginBottom: 20,
         color: '#000',
     },
-    /* infoText: {
-        fontSize: 16,
-        lineHeight: 22,
-        textAlign: 'justify',
-        color: '#666',
-        marginBottom: 50,
-    }, */
     button: {
         backgroundColor: '#00CC00',
         paddingVertical: 10,
         paddingHorizontal: 20,
         justifyContent: 'center',
         borderRadius: 10,
-        marginTop: 100,
+        marginTop: 20,
         width: 180,
         height: 60,
     },

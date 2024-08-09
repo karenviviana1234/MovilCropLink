@@ -37,13 +37,13 @@ const Soport = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.ServicesFuntions}>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={styles.button}
                             onPress={() => navigation.navigate('ChangePassword')}
                         >
                             <FontAwesome name="comment" size={30} style={styles.icon} />
                             <Text style={styles.buttonText}>Recuperar Contraseña</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => navigation.navigate('Documentacion')}
@@ -62,9 +62,11 @@ const Soport = ({ navigation }) => {
                 </View>
                 <View style={styles.contentAboutUs}>
                     <Text style={styles.usTitle}>Sobre Nosotros</Text>
-                    <Text style={[styles.usTxt, styles.usTxtName]}>Maikol Jhovanny</Text>
-                    <Text style={styles.usTxt}>lorem ipsum lorem ipsum </Text>
-                    <Text style={styles.usTxt}>lorem ipsum lorem ipsum </Text>
+                    <Image source={require('../assets/ImgADSO.jpg')} style={styles.imgADSO} />
+                    <Text style={[styles.usTxt, styles.usTxtName]}>Karen Viviana Guevara Diaz</Text>
+                    <Text style={styles.usTxt}>Darío José Zamora Vargas </Text>
+                    <Text style={styles.usTxt}>Daniel Felipe Gonzalez Braveo </Text>
+                    <Text style={styles.usTxt}>Sharit Daniena Vargas Almario </Text>
                 </View>
             </ScrollView>
         </View>
@@ -186,12 +188,19 @@ const styles = StyleSheet.create({
     /* Estilos Sobre nosotros */
     contentAboutUs: {
         alignItems: 'center',
-        marginBottom: 150,
+        marginBottom: 50,
+    },
+    imgADSO: {
+        width: 300,
+        height: 250,
+        marginTop: 50,
+        marginBottom: 40,
+        borderRadius: 20,
     },
     usTitle: {
         fontSize: 24,
         fontWeight: '600',
-        marginBottom: 280,
+        marginBottom: 50,
         color: '#000',
     },
     usTxtName: {
